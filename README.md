@@ -55,7 +55,7 @@ A procedural generation system that creates random dungeon layouts with enemies,
 ## Mechanic 12: 2.5D RPG Game Mechanics
 A 2.5D RPG system that combines 3D environments with 2D gameplay mechanics. The system includes RPG elements like character stats, inventory management, quests, and combat with enemies.
 
-## Mechanic 13: Code Monkey DOTS and Game Mechanics
+## Mechanic 13: DOTS and Game Mechanics
 A collection of game mechanics using Unity's Data-Oriented Technology Stack (DOTS). This project explores how DOTS can be used to optimize game performance for large-scale simulations and complex gameplay mechanics.
 
 
