@@ -8,7 +8,7 @@ public class MouseWorld : MonoBehaviour
     private static MouseWorld instance;
 
     // Layer mask to specify which layer to use for raycasting the mouse position
-    private LayerMask mousePlaneLM;
+    [SerializeField] private LayerMask mousePlaneLM;
 
     private void Awake()
     {

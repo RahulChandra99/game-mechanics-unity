@@ -9,9 +9,11 @@ public class Unit : MonoBehaviour
     private float moveSpeed = 3f;
     // Target position the unit will move towards
     private Vector3 targetPos;
+    [SerializeField]private Animator unitAnimator;
 
     private void Update()
     {
+        
         // Define a minimum stopping distance from the target position
         float stoppingDistance = 0.01f;
 
@@ -23,6 +25,14 @@ public class Unit : MonoBehaviour
 
             // Move the unit towards the target based on the direction, speed, and deltaTime
             transform.position += moveDirection * Time.deltaTime * moveSpeed;
+
+            float rotateSpeed = 10.0f;
+            transform.forward = Vector3.Lerp(transform.forward, moveDirection,rotateSpeed * Time.deltaTime);
+            unitAnimator.SetBool("IsWalking",true);
+        }
+        else
+        {
+            unitAnimator.SetBool("IsWalking",false);
         }
             
         // Check for a left mouse button click to set a new target position
