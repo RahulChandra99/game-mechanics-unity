@@ -29,8 +29,8 @@ public class CameraController : MonoBehaviour
         invertYVal = (invertY) ? -1 : 1;
         
         //horizontal and vertical mouse camera movement
-        _rotationY += Input.GetAxis("Mouse X") * horizSens;
-        _rotationX += Input.GetAxis("Mouse Y") * verticalSens * invertYVal;
+        _rotationY += Input.GetAxis("Camera X") * horizSens;
+        _rotationX += Input.GetAxis("Camera Y") * verticalSens * invertYVal;
         //clam vertical camera movement
         _rotationX = Mathf.Clamp(_rotationX, minVerticalAngle, maxVerticalAngle);
 
