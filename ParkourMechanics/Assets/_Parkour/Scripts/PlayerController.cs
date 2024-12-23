@@ -10,9 +10,20 @@ public class PlayerController : MonoBehaviour
     public float rotationSpeed = 500f;
     private Quaternion targetRotation;
 
+    private Animator _animator;
+    private CharacterController _characterController;
+
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] Vector3 groundCheckOffset;
+    [SerializeField] LayerMask groundLayer;
+    private bool isGrounded;
+    private float ySpeed;
+
     private void Awake()
     {
         if (Camera.main != null) _cameraController = Camera.main.GetComponent<CameraController>();
+        _animator = transform.GetComponent<Animator>();
+        _characterController = transform.GetComponent<CharacterController>();
     }
 
     private void Update()
@@ -21,24 +32,48 @@ public class PlayerController : MonoBehaviour
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
-        float moveAmount = Mathf.Abs(ver) + Mathf.Abs(hor);
+        float moveAmount = Mathf.Clamp01(Mathf.Abs(ver) + Mathf.Abs(hor));
         
         //make vector with input
         var moveInput = new Vector3(hor, 0, ver).normalized;
         //multiply move vector with camera rotataion and create movedirection vector
         var moveDirection = _cameraController.PlanarRotation * moveInput;
+        
+        GroundCheck();
 
+        if (isGrounded)
+        {
+            ySpeed = -0.5f;
+        }
+        else
+        {
+            ySpeed += Physics.gravity.y * Time.deltaTime;
+        }
+        var velocity = moveDirection * moveSpeed;
+        velocity.y = ySpeed;
+            
+        _characterController.Move(velocity * Time.deltaTime);
+        
         if (moveAmount > 0)
         {
-            //change position with the new vector created and multiply by speed and with time.deltatime
-            transform.position += moveDirection * (moveSpeed * Time.deltaTime);
-            
             //make character face the direction its moving in
             targetRotation = Quaternion.LookRotation(moveDirection);
-            //smoothly rotate and set value
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
+        //smoothly rotate and set value
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
        
+        _animator.SetFloat("moveAmount",moveAmount,0.2f,Time.deltaTime);
+        
+    }
 
+    void GroundCheck()
+    {
+        isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius);
     }
 }
