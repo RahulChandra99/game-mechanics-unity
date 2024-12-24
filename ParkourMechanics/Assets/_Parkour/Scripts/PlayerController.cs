@@ -28,17 +28,16 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        //take input
+        // Input
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
         float moveAmount = Mathf.Clamp01(Mathf.Abs(ver) + Mathf.Abs(hor));
         
-        //make vector with input
+        // Movement vector
         var moveInput = new Vector3(hor, 0, ver).normalized;
-        //multiply move vector with camera rotataion and create movedirection vector
         var moveDirection = _cameraController.PlanarRotation * moveInput;
-        
+
         GroundCheck();
 
         if (isGrounded)
@@ -49,21 +48,23 @@ public class PlayerController : MonoBehaviour
         {
             ySpeed += Physics.gravity.y * Time.deltaTime;
         }
-        var velocity = moveDirection * moveSpeed;
+
+        // Update velocity
+        var velocity = moveDirection * moveSpeed * moveAmount;
         velocity.y = ySpeed;
             
         _characterController.Move(velocity * Time.deltaTime);
-        
+
+        // Handle rotation
         if (moveAmount > 0)
         {
-            //make character face the direction its moving in
             targetRotation = Quaternion.LookRotation(moveDirection);
         }
-        //smoothly rotate and set value
+
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
        
-        _animator.SetFloat("moveAmount",moveAmount,0.2f,Time.deltaTime);
-        
+        // Update animator
+        _animator.SetFloat("moveAmount", moveAmount, 0.2f, Time.deltaTime);
     }
 
     void GroundCheck()
@@ -71,9 +72,9 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
     }
 
-    private void OnDrawGizmosSelected()
+    /*private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius);
-    }
+    }*/
 }
