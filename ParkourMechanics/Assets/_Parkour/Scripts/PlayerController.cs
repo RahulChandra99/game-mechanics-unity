@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Vector3 groundCheckOffset;
     [SerializeField] LayerMask groundLayer;
     private bool isGrounded;
+    private bool hasControl = true;
     private float ySpeed;
 
     private void Awake()
@@ -38,6 +39,9 @@ public class PlayerController : MonoBehaviour
         var moveInput = new Vector3(hor, 0, ver).normalized;
         var moveDirection = _cameraController.PlanarRotation * moveInput;
 
+        if (!hasControl)
+            return;
+        
         GroundCheck();
 
         if (isGrounded)
@@ -70,6 +74,18 @@ public class PlayerController : MonoBehaviour
     void GroundCheck()
     {
         isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
+    }
+
+    public void SetControl(bool hasControl)
+    {
+        this.hasControl = hasControl;
+        _characterController.enabled = hasControl;
+
+        if (!hasControl)
+        {
+            _animator.SetFloat("moveAmount",0f);
+            targetRotation = transform.rotation;
+        }
     }
 
     /*private void OnDrawGizmosSelected()
