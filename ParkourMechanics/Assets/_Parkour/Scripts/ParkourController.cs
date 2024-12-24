@@ -10,6 +10,8 @@ public class ParkourController : MonoBehaviour
     private Animator _animator;
     private PlayerController _playerController;
 
+    [SerializeField] private List<ParkourAction> parkourActions;
+
     private bool inAction;
 
     private void Awake()
@@ -26,7 +28,16 @@ public class ParkourController : MonoBehaviour
             var hitData = _environmentScanner.ObstacleCheck();
             if (hitData.forwardHitFound)
             {
-                StartCoroutine(DoParkourAction());
+                foreach (var action in parkourActions)
+                {
+                    if (action.CheckIfPossible(hitData, transform))
+                    {
+                        StartCoroutine(DoParkourAction(action));
+                        break;
+                    }
+                }
+                
+                
             }
         }
         
@@ -34,16 +45,19 @@ public class ParkourController : MonoBehaviour
         
     }
 
-    IEnumerator DoParkourAction()
+    IEnumerator DoParkourAction(ParkourAction action)
     {
         inAction = true;
         _playerController.SetControl(false);
         
-        _animator.CrossFade("StepUp",0.2f);
+        _animator.CrossFade(action.AnimName,0.2f);
         yield return null;
 
         var animState = _animator.GetNextAnimatorStateInfo(0);
-        Debug.Log(animState.length);
+        if (!animState.IsName(action.AnimName))
+        {
+            Debug.Log("Parkour animation is wrong!");
+        }
         
         yield return new WaitForSeconds(animState.length);
 
