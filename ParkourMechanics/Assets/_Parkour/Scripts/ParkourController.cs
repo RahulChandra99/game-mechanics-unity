@@ -36,8 +36,6 @@ public class ParkourController : MonoBehaviour
                         break;
                     }
                 }
-                
-                
             }
         }
         
@@ -55,11 +53,16 @@ public class ParkourController : MonoBehaviour
 
         var animState = _animator.GetNextAnimatorStateInfo(0);
         if (!animState.IsName(action.AnimName))
-        {
             Debug.Log("Parkour animation is wrong!");
-        }
         
         yield return new WaitForSeconds(animState.length);
+
+        float timer = 0f;
+        while (timer <= animState.length)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
 
         _playerController.SetControl(true);
         inAction = false;
